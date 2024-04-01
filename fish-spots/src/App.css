@@ -114,16 +114,16 @@ h1, h2, h3 {
 }
 
 .card-image-column {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  min-width: 120px;
 }
 .smaller-text {
   font-size: medium; 
   font-style: italic;
 }
 .card {
-  min-width: 0;
+  p {
+    margin-bottom: 0;
+  }
 }
 
 

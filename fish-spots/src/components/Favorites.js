@@ -3,8 +3,7 @@ import { Card, Space, Image, Row, Col, Tag, Typography } from 'antd';
 const { Text } = Typography;
 
 export default function Favorites(props){
-    return (
-            
+    return ( 
             <Space className="posts-container" direction="vertical"  style={{ display: 'flex' }}>
                 <h2>Saved favorites here:</h2>
                 {props.favorites.map((item) =>(

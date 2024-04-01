@@ -84,6 +84,11 @@ h1, h2, h3 {
   width: 50%;
 }
 
+.tab-section {
+  width: 100%;
+  min-height: 40em;
+}
+
 .description {
   margin-top: 0;
   text-align: left;

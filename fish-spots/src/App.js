@@ -399,6 +399,7 @@ function App() {
       label: 'Posts',
       children: 
         <div className='body'>
+          
           <Posts posts={posts} fish_categories={fish_categories} months={months} sort_categories={sort_categories} sortPosts={sortPosts} addFavorite={addFavorite}/>
         </div>,
       
@@ -408,7 +409,9 @@ function App() {
       label: 'Favorites',
       children: 
         <div className='body'>
-          <Favorites favorites={favorites} removeFavorite={removeFavorite}/>
+          <div className="tab-section">
+            <Favorites favorites={favorites} removeFavorite={removeFavorite}/>
+          </div>
         </div>
     },
   ];

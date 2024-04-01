@@ -2,15 +2,13 @@ import {
     DownOutlined
 } from '@ant-design/icons';
 
-import { Card, Space, Image, Flex, Row, Col, Typography, Tag, Divider, Button, Dropdown, Checkbox } from 'antd';
+import { Card, Space, Image, Row, Col, Typography, Tag, Dropdown } from 'antd';
 
 const { Text } = Typography;
 
-
-
 export default function Posts(props){
     return (
-          <Space className="posts-container" direction="vertical"  style={{ display: 'flex' }}>
+          <Space direction="vertical"  style={{ display: 'flex' }}>
             <h2>Find your favorite fishing spots!</h2>
             <div className="filter-sort">
               <Space direction="horizontal">
@@ -43,7 +41,8 @@ export default function Posts(props){
             {props.posts.map((item) =>(
               <Card 
                 className="card" 
-                title={<p>{item.title+" "}<Text type='secondary'>{item.date_posted}</Text></p>} 
+                size="small"
+                title={<div><p>{item.title}</p><Text type='secondary'>{item.date_posted}</Text></div>} 
                 description={item.date_posted} 
                 extra=
                   {

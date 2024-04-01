@@ -157,7 +157,7 @@ function App() {
       description: "Crabbing is a favorite pasttime for PNW resients, and it is not hard to catch them. Many locations have crabs, and they prefer sandy bottoms not too deep and preferably with eelgrass. Near rivers is often good too. A protected bay will prevent crab pots from floating away, and make sure the tides aren't rising too much or your pot could get pulled away.",
       fish_types: ["Dungeness Crab"],
       fish_category: "crustacean",
-      locations: ["Alki Point", "Bainbridge Island", "Shoreline between Kingston and President's Point", "Browns Bay near Edmonds", "Guemes Island", "Cama Beach"],
+      locations: ["Alki Point", "Bainbridge Island", "Shoreline", "Browns Bay near Edmonds", "Guemes Island", "Cama Beach"],
       months: ["June", "July", "August"],
       date_posted: "01-05-2024",
       image: "images/crab.jpg",
@@ -398,8 +398,7 @@ function App() {
       key: '1',
       label: 'Posts',
       children: 
-        <div className='body'>
-          
+        <div className='body-tab'>
           <Posts posts={posts} fish_categories={fish_categories} months={months} sort_categories={sort_categories} sortPosts={sortPosts} addFavorite={addFavorite}/>
         </div>,
       
@@ -408,7 +407,7 @@ function App() {
       key: '2',
       label: 'Favorites',
       children: 
-        <div className='body'>
+        <div className='body-tab'>
           <div className="tab-section">
             <Favorites favorites={favorites} removeFavorite={removeFavorite}/>
           </div>

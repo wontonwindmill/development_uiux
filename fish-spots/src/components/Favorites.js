@@ -4,7 +4,7 @@ const { Text } = Typography;
 
 export default function Favorites(props){
     return ( 
-            <Space className="posts-container" direction="vertical"  style={{ display: 'flex' }}>
+            <Space direction="vertical"  style={{ display: 'flex' }}>
                 <h2>Saved favorites here:</h2>
                 {props.favorites.map((item) =>(
                 <Card 

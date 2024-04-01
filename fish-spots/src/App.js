@@ -1,20 +1,8 @@
-import logo from './logo.svg';
 import './App.css';
-import {
-  DownOutlined
-} from '@ant-design/icons';
-import { Card, Space, Image, Flex, Row, Col, Typography, Tag, Divider, Button, Dropdown, Checkbox } from 'antd';
+import { Checkbox, Tabs } from 'antd';
 import { useState, useEffect } from 'react';
-const { Meta } = Card;
-
-const { Text } = Typography;
-
-const onChange = (e) => {
-  console.log(`checked = ${e.target.checked}`);
-};
-const handleChecked = (month, checked, value) => {
-  console.log(`Month ${month} is ${checked} with ${value}`)
-}
+import Favorites from './components/Favorites';
+import Posts from './components/Posts';
 
 const sort_categories= [
   {
@@ -26,6 +14,7 @@ const sort_categories= [
     key: 'oldest'
   },
 ]
+
 
 
 function convertDateFormat(dateString) {
@@ -195,6 +184,20 @@ function App() {
   const [ favorites, setFavorites ] = useState([]);
   const [ fishFilters, setFishFilters ] = useState(["trout", "salmon", "perch", "squid", "rockfish", "bottomfish", "crustacean","smelt"]);
   const [ monthFilters, setMonthFilters ] = useState(["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]);
+  
+  const [isDesktop, setDesktop] = useState(window.innerWidth > 1450);
+
+  const updateMedia = () => {
+    setDesktop(window.innerWidth > 900);
+  };
+  
+  useEffect(() => {
+    window.addEventListener("resize", updateMedia);
+    updateMedia()
+    return () => window.removeEventListener("resize", updateMedia);
+  });
+  
+  
   const filter = () => {
     var copy_posts = [].concat(posts_data);
     const filtered = copy_posts.filter((post) => {
@@ -264,6 +267,46 @@ function App() {
     }  
   }
 
+
+  
+
+  
+  
+  const sortPosts = (e) => {
+    console.log("sorting");
+    const sorted_posts = [].concat(posts).sort(function(a,b){
+      // Turn your strings into dates, and then subtract them
+      // to get a value that is either negative, positive, or zero.
+      if(e.key == "latest"){
+        return new Date(convertDateFormat(b.date_posted)) - new Date(convertDateFormat(a.date_posted));
+      }else if(e.key == "oldest"){
+        return new Date(convertDateFormat(a.date_posted)) -  new Date(convertDateFormat(b.date_posted));
+      }
+        
+    });
+    setPosts(sorted_posts);
+  }
+  function hasObjectWithId(list, id) {
+    console.log(list)
+    console.log(id)
+    console.log(`Some stuff ${list.find(item => item.id == id)}`)
+    return list.find(item => item.id == id) !== undefined;
+  }
+  const addFavorite = (item) => {
+    setFavorites((favorites) => 
+      {
+        var copy_favorites = [].concat(favorites);
+        if(!hasObjectWithId(copy_favorites, item.id)){
+          copy_favorites.push(item);
+        }
+        return copy_favorites;
+      });
+  }
+  const removeFavorite = (item) => {
+    var copy_favorites = [].concat(favorites);
+    const output = copy_favorites.filter(fav => fav.id !== item.id)
+    setFavorites(output)
+  }
 
   const fish_categories= [
     {
@@ -350,42 +393,25 @@ function App() {
     },
   ];
 
-  
-  const sortPosts = (e) => {
-    console.log("sorting");
-    const sorted_posts = [].concat(posts).sort(function(a,b){
-      // Turn your strings into dates, and then subtract them
-      // to get a value that is either negative, positive, or zero.
-      if(e.key == "latest"){
-        return new Date(convertDateFormat(b.date_posted)) - new Date(convertDateFormat(a.date_posted));
-      }else if(e.key == "oldest"){
-        return new Date(convertDateFormat(a.date_posted)) -  new Date(convertDateFormat(b.date_posted));
-      }
-        
-    });
-    setPosts(sorted_posts);
-  }
-  function hasObjectWithId(list, id) {
-    console.log(list)
-    console.log(id)
-    console.log(`Some stuff ${list.find(item => item.id == id)}`)
-    return list.find(item => item.id == id) !== undefined;
-  }
-  const addFavorite = (item) => {
-    setFavorites((favorites) => 
-      {
-        var copy_favorites = [].concat(favorites);
-        if(!hasObjectWithId(copy_favorites, item.id)){
-          copy_favorites.push(item);
-        }
-        return copy_favorites;
-      });
-  }
-  const removeFavorite = (item) => {
-    var copy_favorites = [].concat(favorites);
-    const output = copy_favorites.filter(fav => fav.id !== item.id)
-    setFavorites(output)
-  }
+  const tabs_content= [
+    {
+      key: '1',
+      label: 'Posts',
+      children: 
+        <div className='body'>
+          <Posts posts={posts} fish_categories={fish_categories} months={months} sort_categories={sort_categories} sortPosts={sortPosts} addFavorite={addFavorite}/>
+        </div>,
+      
+    },
+    {
+      key: '2',
+      label: 'Favorites',
+      children: 
+        <div className='body'>
+          <Favorites favorites={favorites} removeFavorite={removeFavorite}/>
+        </div>
+    },
+  ];
 
   return (
     <div className="app">
@@ -394,113 +420,23 @@ function App() {
         <p>After much research, here is the best fishing in Washington State! These fish are the tastiest and easiest to catch. Most require only a rod, and a simple boat helps with a few.</p>
       </div>
       <hr/>
-      <div className="body">
-        <div className="posts">
-          <Space direction="vertical"  style={{ display: 'flex' }}>
-            <h2>Find your favorite fishing spots!</h2>
-            <div className="filter-sort">
-              <Space direction="horizontal">
-                <Dropdown 
-                  menu={{
-                    items: fish_categories, 
-                  }} 
-                  trigger={['click']}
-                >
-                  <button className="button">Fish Type <DownOutlined/></button>
-                </Dropdown>
-                <Dropdown menu={{items: months}} trigger={['click']}>
-                  <button className="button">Months <DownOutlined/></button>
-                </Dropdown>
-              </Space>
-              <Dropdown 
-                menu={{
-                  items: sort_categories,
-                  selectable: true,
-                  defaultSelectedKeys: ['latest'],
-                  onClick: sortPosts
-                }} 
-                trigger={['click']}
-              >
-                  <button className="button">Sort: <DownOutlined/></button>
-              </Dropdown>
-            </div>
-            
-              
-            {posts.map((item) =>(
-              <Card 
-                className="card" 
-                title={<p>{item.title+" "}<Text type='secondary'>{item.date_posted}</Text></p>} 
-                description={item.date_posted} 
-                extra=
-                  {
-                    <a onClick={(e) => {e.preventDefault(); addFavorite(item);}} href="#">Save</a>
-                  } 
-                >         
-                <Row gutter={16}>
-                  <Col className="gutter-row" span={8}>
-                      <div>
-                        <Image
-                          src={item.image}
-                        />
-                        <Text type="secondary">{"("+item.image_credit+")"}</Text>
-                      </div>
-                      <div>
-                        <h4>Fish Species: </h4>
-                        {item.fish_types.map((type) => <Tag color="volcano">{type}</Tag>)}
-                      </div>            
-                  </Col>
-                  <Col className="gutter-row" span={16}>
-                    <p className="description">{item.description}</p>
-                    <h4>Locations: </h4>
-                    {item.locations.map((location) => <Tag color="geekblue">{location}</Tag>)}
-                    <h4>Months:</h4>
-                    {item.months.map((month) => <Tag color="green">{month}</Tag>)}
-                  </Col>
-                </Row>
-              </Card>
-            ))}
-          </Space>
+
+      {isDesktop ? (
+        <div className="body">
+          <div className="body-section">
+            <Posts posts={posts} fish_categories={fish_categories} months={months} sort_categories={sort_categories} sortPosts={sortPosts} addFavorite={addFavorite}/>
+          </div>
+          <hr className="divider"/>
+          <div className="body-section">
+            <Favorites favorites={favorites} removeFavorite={removeFavorite}/>
+          </div>
         </div>
-        <hr className="divider"/>
-        <div className="favorites">
-          <h2>Saved favorites here:</h2>
-          <Space direction="vertical"  style={{ display: 'flex' }}>
-            {favorites.map((item) =>(
-              <Card 
-                className="card" 
-                title={<p>{item.title+" "}<Text type='secondary'>{item.date_posted}</Text></p>} 
-                description={item.date_posted} 
-                extra=
-                  {
-                    <a onClick={(e) => {e.preventDefault(); removeFavorite(item);}} href="#">Delete</a>
-                  } 
-                >         
-                <Row gutter={16}>
-                  <Col className="gutter-row" span={8}>
-                      <div>
-                        <Image
-                          src={item.image}
-                        />
-                        <Text type="secondary">{"("+item.image_credit+")"}</Text>
-                      </div>
-                      <div>
-                        <h4>Fish Species: </h4>
-                        {item.fish_types.map((type) => <Tag color="volcano">{type}</Tag>)}
-                      </div>            
-                  </Col>
-                  <Col className="gutter-row" span={16}>
-                    <p className="description">{item.description}</p>
-                    <h4>Locations: </h4>
-                    {item.locations.map((location) => <Tag color="geekblue">{location}</Tag>)}
-                    <h4>Months:</h4>
-                    {item.months.map((month) => <Tag color="green">{month}</Tag>)}
-                  </Col>
-                </Row>
-              </Card>
-            ))}
-          </Space>
+      ) : (
+        <div>
+          <Tabs defaultActiveKey="1" items={tabs_content}/>
         </div>
-      </div>
+      )}
+
     </div>
   );
 }

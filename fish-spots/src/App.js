@@ -267,7 +267,7 @@ function App() {
       children: 
         <div className='body-tab'>
           <div className="tab-section">
-            <Favorites favorites={favorites} removeFavorite={removeFavorite}/>
+            <Favorites isMobile={isMobile} favorites={favorites} removeFavorite={removeFavorite}/>
           </div>
         </div>
     },

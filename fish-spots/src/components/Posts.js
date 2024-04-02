@@ -1,9 +1,13 @@
 
-import { Card, Image, Row, Col, Typography, Tag, Flex, Space } from 'antd';
+import { Card, Image, Row, Col, Typography, Tag, Flex, Space, message } from 'antd';
 
 const { Text } = Typography;
 
 export default function Posts(props){
+
+    const success = () => {
+        message.success(`${props.favoriteAction}d`)
+    };
 
     return(
         <Space direction="vertical"  style={{ display: 'flex' }}>
@@ -15,7 +19,7 @@ export default function Posts(props){
                   description={item.date_posted} 
                   extra=
                     {
-                      <a onClick={(e) => {e.preventDefault(); props.favoriteFunc(item);}} href="#">Save</a>
+                        <a onClick={(e) => {success(); e.preventDefault(); props.favoriteFunc(item);}} href="#">{props.favoriteAction}</a>
                     } 
                   >
                   {props.isMobile ? (

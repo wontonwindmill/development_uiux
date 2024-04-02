@@ -39,7 +39,7 @@ export default function MainPosts(props){
             {props.posts.length == 0 ? (
                 <p>Delete some filters to see more posts!</p>
               ) : (
-                <Posts posts={props.posts} isMobile={props.isMobile} favoriteFunc={props.addFavorite}/>
+                <Posts posts={props.posts} isMobile={props.isMobile} favoriteAction="Save" favoriteFunc={props.addFavorite}/>
               )
             }
           </Space>

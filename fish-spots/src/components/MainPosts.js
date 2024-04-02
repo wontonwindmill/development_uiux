@@ -2,9 +2,7 @@ import {
     DownOutlined
 } from '@ant-design/icons';
 import Posts from './Posts';
-import { Space, Typography, Dropdown, Card, Image, Row, Col, Tag, Flex  } from 'antd';
-
-const { Text } = Typography;
+import { Space, Dropdown } from 'antd';
 
 export default function MainPosts(props){
     return (
@@ -15,10 +13,12 @@ export default function MainPosts(props){
                 <Dropdown 
                   menu={{
                     items: props.fish_categories, 
+                    onClick:(e) => {e.domEvent.stopPropagation();}
                   }} 
+                  
                   trigger={['click']}
                 >
-                  <button className="button">Fish Type <DownOutlined/></button>
+                  <button onClick={(e) => {e.stopPropagation(); e.preventDefault();}} className="button">Fish Type <DownOutlined/></button>
                 </Dropdown>
                 <Dropdown menu={{items: props.months}} trigger={['click']}>
                   <button className="button">Months <DownOutlined/></button>
@@ -29,14 +29,19 @@ export default function MainPosts(props){
                   items: props.sort_categories,
                   selectable: true,
                   defaultSelectedKeys: ['latest'],
-                  onClick: props.sortPosts
+                  onClick:(e) => {props.sortPosts(e)}
                 }} 
                 trigger={['click']}
               >
                   <button className="button">Sort: <DownOutlined/></button>
               </Dropdown>
             </div>
-            <Posts posts={props.posts} isMobile={props.isMobile} favoriteFunc={props.addFavorite}/>
+            {props.posts.length == 0 ? (
+                <p>Delete some filters to see more posts!</p>
+              ) : (
+                <Posts posts={props.posts} isMobile={props.isMobile} favoriteFunc={props.addFavorite}/>
+              )
+            }
           </Space>
     )
 }

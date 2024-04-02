@@ -3,7 +3,6 @@ import { Checkbox, Tabs } from 'antd';
 import { useState, useEffect } from 'react';
 import Favorites from './components/Favorites';
 import MainPosts from './components/MainPosts';
-
 import posts_data from "./assets/posts-data.json";
 
 posts_data.forEach((item) => {
@@ -21,8 +20,6 @@ const sort_categories= [
   },
 ]
 
-
-
 function convertDateFormat(dateString) {
   // Split the input string by "-"
     var parts = dateString.split("-");
@@ -33,16 +30,28 @@ function convertDateFormat(dateString) {
     return formattedDate;
 }
 
-function App() {
-  
+const fishOptions = ["Trout", "Salmon", "Perch", "Squid", "Rockfish", "Bottomfish", "Crustacean","Smelt"];
+const monthOptions = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
+function App() {
   const [ posts, setPosts ] = useState(posts_data);
   const [ favorites, setFavorites ] = useState([]);
-  const [ fishFilters, setFishFilters ] = useState(["trout", "salmon", "perch", "squid", "rockfish", "bottomfish", "crustacean","smelt"]);
-  const [ monthFilters, setMonthFilters ] = useState(["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]);
-  
+  const [ fishFilters, setFishFilters ] = useState(fishOptions);
+  const [ monthFilters, setMonthFilters ] = useState(monthOptions);
   const [isDesktop, setDesktop] = useState(window.innerWidth > 900);
   const [isMobile, setMobile] = useState(window.innerWidth < 400);
+
+  const checkAllFish = fishOptions.length === fishFilters.length;
+
+  const onFishCheckAllChange = (e) => {
+    setFishFilters(e.target.checked ? fishOptions : []);
+  };
+
+  const checkAllMonths = monthOptions.length === monthFilters.length;
+
+  const onMonthCheckAllChange = (e) => {
+    setMonthFilters(e.target.checked ? monthOptions : []);
+  };
 
   const updateMedia = () => {
     setDesktop(window.innerWidth > 900);
@@ -55,21 +64,17 @@ function App() {
     return () => window.removeEventListener("resize", updateMedia);
   });
   
-  
   const filter = () => {
     var copy_posts = [].concat(posts_data);
     const filtered = copy_posts.filter((post) => {
       var copy_month_filters = [].concat(monthFilters);
       var copy_fish_filters = [].concat(fishFilters);
-      console.log(copy_month_filters)
-      console.log(copy_fish_filters)
       const intersection = copy_month_filters.filter(value => post.months.includes(value));
       return (copy_fish_filters.includes(post.fish_category)&& intersection.length > 0)
     });
 
     setPosts(filtered);
   }
-
 
   useEffect(filter,[fishFilters, monthFilters]);
 
@@ -92,8 +97,6 @@ function App() {
         setMonthFilters((filters) => {
           const output = [].concat(filters);
           output.splice(index, 1); 
-          console.log(`months are ${output}`
-          )
           return output
         });
       }
@@ -124,14 +127,8 @@ function App() {
       }
     }  
   }
-
-
-  
-
-  
   
   const sortPosts = (e) => {
-    console.log("sorting");
     const sorted_posts = [].concat(posts).sort(function(a,b){
       // Turn your strings into dates, and then subtract them
       // to get a value that is either negative, positive, or zero.
@@ -144,12 +141,11 @@ function App() {
     });
     setPosts(sorted_posts);
   }
+
   function hasObjectWithId(list, id) {
-    console.log(list)
-    console.log(id)
-    console.log(`Some stuff ${list.find(item => item.id == id)}`)
     return list.find(item => item.id == id) !== undefined;
   }
+
   const addFavorite = (item) => {
     setFavorites((favorites) => 
       {
@@ -166,90 +162,54 @@ function App() {
     setFavorites(output)
   }
 
+  const ignoreHandler = (e) => e.preventDefault();
+
+  const indeterminate_fish = fishFilters.length > 0 && fishFilters.length < 8;
+  const indeterminate_months = monthFilters.length > 0 && monthFilters.length < 8;
+
   const fish_categories= [
     {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateFishFilters(e.target.checked, 'trout')}>Trout</Checkbox>,
-      key: 'trout'
+      label: <div onClick={(e) => e.stopPropagation()}>
+        <Checkbox indeterminate={indeterminate_fish} onClick={ignoreHandler} checked={checkAllFish} onChange={onFishCheckAllChange}>Check All</Checkbox>
+      </div>,
+      key: 'checkAll'
     },
     {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateFishFilters(e.target.checked, 'salmon')}>Salmon</Checkbox>,
-      key: 'salmon'
+      type: 'divider',
     },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateFishFilters(e.target.checked, 'perch')}>Perch</Checkbox>,
-      key: 'perch'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateFishFilters(e.target.checked, 'squid')}>Squid</Checkbox>,
-      key: 'squid'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateFishFilters(e.target.checked, 'rockfish')}>Rockfish</Checkbox>,
-      key: 'rockfish'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateFishFilters(e.target.checked, 'bottomfish')}>Bottomfish</Checkbox>,
-      key: 'bottomfish'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateFishFilters(e.target.checked, 'crustacean')}>Crustacean</Checkbox>,
-      key: 'crustacean'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateFishFilters(e.target.checked, 'smelt')}>Smelt</Checkbox>,
-      key: 'smelt'
-    },
-  ];
+  ].concat(
+    fishOptions.map((fish) => {
+      return {
+        label: 
+          <div onClick={(e) => e.stopPropagation()}>
+            <Checkbox checked={fishFilters.includes(fish)} onClick={ignoreHandler} onChange={(e) => updateFishFilters(e.target.checked, fish)}>{fish}</Checkbox>
+          </div>,
+        key: fish
+      }
+    })
+  );
+
   const months= [
     {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'January')}>January</Checkbox>,
-      key: '1'
+      label: <div onClick={(e) => e.stopPropagation()}>
+        <Checkbox indeterminate={indeterminate_months} onClick={ignoreHandler} checked={checkAllMonths} onChange={onMonthCheckAllChange}>Check All</Checkbox>
+      </div>,
+      key: 'checkAll'
     },
     {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'February')}>February</Checkbox>,
-      key: '2'
+      type: 'divider',
     },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'March')}>March</Checkbox>,
-      key: '3'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'April')}>April</Checkbox>,
-      key: '4'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'May')}>May</Checkbox>,
-      key: '5'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'June')}>June</Checkbox>,
-      key: '6'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'July')}>July</Checkbox>,
-      key: '7'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'August')}>August</Checkbox>,
-      key: '8'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'September')}>September</Checkbox>,
-      key: '9'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'October')}>October</Checkbox>,
-      key: '10'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'November')}>November</Checkbox>,
-      key: '11'
-    },
-    {
-      label: <Checkbox defaultChecked={true} onChange={(e) => updateMonthFilters(e.target.checked, 'December')}>December</Checkbox>,
-      key: '12'
-    },
-  ];
+  ].concat(
+    monthOptions.map((month) => {
+      return {
+        label: 
+          <div onClick={(e) => e.stopPropagation()}>
+            <Checkbox checked={monthFilters.includes(month)} onClick={ignoreHandler} onChange={(e) => updateMonthFilters(e.target.checked, month)}>{month}</Checkbox>
+          </div>,
+        key: month
+      }
+    })
+  );
 
   const tabs_content= [
     {
@@ -257,9 +217,10 @@ function App() {
       label: 'Posts',
       children: 
         <div className='body-tab'>
-          <MainPosts isMobile={isMobile} posts={posts} fish_categories={fish_categories} months={months} sort_categories={sort_categories} sortPosts={sortPosts} addFavorite={addFavorite}/>
+          <div className="tab-section">
+            <MainPosts isMobile={isMobile} posts={posts} fish_categories={fish_categories} months={months} sort_categories={sort_categories} sortPosts={sortPosts} addFavorite={addFavorite}/>
+          </div>
         </div>,
-      
     },
     {
       key: '2',

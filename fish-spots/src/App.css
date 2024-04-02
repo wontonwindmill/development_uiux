@@ -61,6 +61,7 @@ h1, h2, h3 {
 }
 
 .body {
+  min-height: 40em;
   border: 2px;
   border-style: dashed;
   border-color: rgb(224, 235, 255);
@@ -113,9 +114,6 @@ h1, h2, h3 {
   margin: 0;
 }
 
-.card-image-column {
-  min-width: 120px;
-}
 .smaller-text {
   font-size: medium; 
   font-style: italic;

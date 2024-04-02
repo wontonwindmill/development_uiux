@@ -60,7 +60,7 @@ export default function Posts(props){
                     </Row>
                   )}         
                 </Card>
-              ))};
+              ))}
         </Space>
     )
 }

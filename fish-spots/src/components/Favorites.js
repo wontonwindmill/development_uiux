@@ -4,8 +4,6 @@ import { Space, Typography } from 'antd';
 const { Text } = Typography;
 
 export default function Favorites(props){
-    console.log("some stuff")
-    console.log(props.favorites.length)
     return ( 
             <Space direction="vertical"  style={{ display: 'flex' }}>
                 <h2>Saved favorites here:</h2>

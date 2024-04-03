@@ -28,6 +28,7 @@ export default function Posts(props){
                         <div>
                             <Image
                               src={item.image}
+                              alt={item.fish_category}
                             />
                             <Text type="secondary">{"("+item.image_credit+")"}</Text>
                           </div>     
